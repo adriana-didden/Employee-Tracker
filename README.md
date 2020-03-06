@@ -9,19 +9,19 @@ Design the following database schema containing three tables:
 
 ![Database Schema](Assets/schema.png)
 
-* **department**:
+* **department**: !
 
   * **id** - INT PRIMARY KEY
   * **name** - VARCHAR(30) to hold department name
 
-* **role**:
+* **role**: !
 
   * **id** - INT PRIMARY KEY
   * **title** -  VARCHAR(30) to hold role title
   * **salary** -  DECIMAL to hold role salary
   * **department_id** -  INT to hold reference to department role belongs to
 
-* **employee**:
+* **employee**: !
 
   * **id** - INT PRIMARY KEY
   * **first_name** - VARCHAR(30) to hold employee first name
