@@ -1,6 +1,5 @@
 
 const inquirer = require('inquirer');
-const cTable = require("console.table");
 
 var mysql = require("mysql");
 
@@ -17,6 +16,7 @@ var connection = mysql.createConnection({
     password: "MeStuff!77",
     database: "employee_trackerDB"
 });
+
 const init = () => {
     connection.connect((err) => {
         if (err) console.log(err)
@@ -26,7 +26,7 @@ const logo = require("asciiart-logo")
 const LOGO = () => {
     const logotext = logo({ name: "employees" }).render()
     console.log(logotext)
-    options();
+    questions();
 }
 
 function options() {
@@ -48,7 +48,7 @@ function options() {
             case "remove employee":
                 return removeEmp()
             case "update employee role":
-                return updateEmp()
+                return updateEmpRoles()
             case "update employee manager":
                 return updateMan()
             case "view all roles":
@@ -64,103 +64,111 @@ function options() {
             case "remove department":
                 return remDep();
             case "quit":
-                return quit();
+                return questions();
         }
     })
 }
-const viewEmp = () => {
-    connection.query('SELECT * FROM employee RIGHT JOIN role', function (err,result) {
-        if (err) throw err;
-        console.table(result);
-    })
-    options();
-};
-const empDep = () => {
 
-};
-const empMan = () => {
-
+function viewEmp() {
+    connection.query("SELECT * FROM employee")
 }
-let roleArray = ["sales lead","salesperson","Lead engineer", "software engineer", "accountant", "legal team lead", "lawyer"]
+// function empDep() {
 
-const addEmp = () => {
-    connection.query("SELECT * FROM role", (err, results) => {
-        if (err) console.log(err)
-        connection.query("SELECT * FROM employee", (err, employeesResults) => {
+// }
+// function empMan() {
 
-            if (err) console.log(err)
+// }
+function addEmp() {
+    connection.query("SELECT * FROM roles", function (err, roleResults) {
+        connection.query("SELECT * FROM employee", function (err, employeeResults) {
 
-            let viewEmp = employeesResults.map((employee) => {
-                return {
-                    name: `${employee.first_name} ${employee.last_name}`, value: employee.id
-                }
-            });
-            viewEmp.push({ name: "None", value: null })
+            const viewEmployee = employeeResults.map(employee => {
+                return { name: `${employee.first_name} ${employee.last_name}`, value: employee.id }
+            })
+
+            viewEmployee.push({ name: "None", value: null })
 
             inquirer.prompt([
                 {
+                    type: "input",
                     name: "firstName",
-                    type: "input",
-                    message: "What's the employee's first name"
+                    message: "What's the  employee's first name",
                 },
                 {
+                    type: "input",
                     name: "lastName",
-                    type: "input",
-                    message: "What's the employee's last name"
+                    message: "What's the  employee's last name",
                 },
                 {
-                    name: "role",
                     type: "rawlist",
-                    message: "What's the employee's role",
-                    choices: roleArray
+                    name: "role",
+                    message: "What is their role?",
+                    choices: function () {
+                        var rolesArray = [];
+                        for (var i = 0; i < roleResults.length; i++) {
+                            var role = {
+                                name: roleResults[i].title,
+                                value: roleResults[i].id
+                            }
+                            rolesArray.push(role);
+                        }
+                        return rolesArray;
+
+                    }
                 },
                 {
-                    name: "empManager",
-                    type: "list",
-                    message: "whos the employee's manager",
-                    choices: viewEmp
+                    type: "input",
+                    name: "department",
+                    message: "What's the  employee's department",
                 }
-            ]).then((answer) => {
-                connection.query("INSERT INTO employee SET ?",
-                    {
-                        first_name: answer.first_name,
-                        last_name: answer.last_name,
-                        role_id: answer.role_id,
-                        manager_id: answer.manager_id
-                    }, (err, res) => {
-                        if (err) return console.log(err);
-                        console.log(`Your employee ${answer.first_name} ${answer.last_name} has been added.`)
-                        options();
+
+
+            ]).then((answers) => {
+                connection.query(
+                    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
+                    [
+                        answers.first_name,
+                        answers.last_name,
+                        answers.role_id,
+                        answers.manager_id
+                    ],
+                    (err, res) => {
+                        if (err) console.log(err);
+                        chooseAction();
                     }
                 )
-            });
+                init();
+            })
         })
-    })
-}
+// function removeEmp() {
 
-const removeEmp = () => {
+// }
+// function updateEmpRoles() {
 
-}
-const updateEmp = () => {
+// }
+// function updateMan() {
 
-}
-const updateMan = () => {
+// }
+// function allRoles() {
 
-}
+// }
+// function addRole() {
 
-let departmentArray = ["sales", "engineering", "finance", "legal"]
+// }
+// function removeRole() {
 
-const viewDep = () => {
+// }
+// function viewDep() {
 
-}
-const addDep = () => {
+// }
+// function addDep() {
 
-}
-const remDep = () => {
+// }
+// function remDep() {
 
-}
-const quit = () => {
+// }
+// function questions() {
 
-}
+// }
 init();
-LOGO();
+        LOGO();
