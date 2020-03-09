@@ -79,67 +79,34 @@ function viewEmp() {
 
 // }
 function addEmp() {
-    connection.query("SELECT * FROM roles", function (err, roleResults) {
-        connection.query("SELECT * FROM employee", function (err, employeeResults) {
-
-            const viewEmployee = employeeResults.map(employee => {
-                return { name: `${employee.first_name} ${employee.last_name}`, value: employee.id }
-            })
-
-            viewEmployee.push({ name: "None", value: null })
-
-            inquirer.prompt([
-                {
-                    type: "input",
-                    name: "firstName",
-                    message: "What's the  employee's first name",
-                },
-                {
-                    type: "input",
-                    name: "lastName",
-                    message: "What's the  employee's last name",
-                },
-                {
-                    type: "rawlist",
-                    name: "role",
-                    message: "What is their role?",
-                    choices: function () {
-                        var rolesArray = [];
-                        for (var i = 0; i < roleResults.length; i++) {
-                            var role = {
-                                name: roleResults[i].title,
-                                value: roleResults[i].id
-                            }
-                            rolesArray.push(role);
-                        }
-                        return rolesArray;
-
-                    }
-                },
-                {
-                    type: "input",
-                    name: "department",
-                    message: "What's the  employee's department",
-                }
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "firstName",
+            message: "What's the  employee's first name",
+        },
+        {
+            type: "input",
+            name: "lastName",
+            message: "What's the  employee's last name",
+        },
+        {
+            type: "rawlist",
+            name: "role",
+            message: "What is their role?",
+            choices: []
+        },
+        {
+            type: "list",
+            name: "manager",
+            message: "Whos the  employee's manager",
+            choices: []
+        }
 
 
-            ]).then((answers) => {
-                connection.query(
-                    "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)",
-                    [
-                        answers.first_name,
-                        answers.last_name,
-                        answers.role_id,
-                        answers.manager_id
-                    ],
-                    (err, res) => {
-                        if (err) console.log(err);
-                        chooseAction();
-                    }
-                )
-                init();
-            })
-        })
+    ])
+
+}
 // function removeEmp() {
 
 // }
@@ -171,4 +138,4 @@ function addEmp() {
 
 // }
 init();
-        LOGO();
+LOGO();
