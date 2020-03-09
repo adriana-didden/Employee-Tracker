@@ -70,7 +70,12 @@ function options() {
 }
 
 function viewEmp() {
-    connection.query("SELECT * FROM employee")
+    connection.query("SELECT * FROM employee LEFT JOIN role ON employee.role = role.title", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        options();
+    }
+    )
 }
 // function empDep() {
 
@@ -94,13 +99,11 @@ function addEmp() {
             type: "rawlist",
             name: "role",
             message: "What is their role?",
-            choices: []
         },
         {
             type: "list",
             name: "manager",
             message: "Whos the  employee's manager",
-            choices: []
         }
 
 
