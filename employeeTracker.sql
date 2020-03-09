@@ -2,7 +2,7 @@ DROP DATABASE IF EXISTS employee_trackerDB;
 CREATE DATABASE employee_trackerDB;
 USE employee_trackerDB;
 
-CREATE TABLE employee_name(
+CREATE TABLE employee(
     id INTEGER NOT NULL AUTO_INCREMENT,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
