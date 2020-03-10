@@ -1,6 +1,6 @@
 
 const inquirer = require('inquirer');
-
+var cTable = require("console.table")
 var mysql = require("mysql");
 
 var connection = mysql.createConnection({
@@ -17,16 +17,17 @@ var connection = mysql.createConnection({
     database: "employee_trackerDB"
 });
 
-const init = () => {
-    connection.connect((err) => {
-        if (err) console.log(err)
-    })
-}
+connection.connect((err) => {
+    if (err) console.log(err)
+    LOGO();
+    options();
+})
+
+
 const logo = require("asciiart-logo")
 const LOGO = () => {
     const logotext = logo({ name: "employees" }).render()
     console.log(logotext)
-    questions();
 }
 
 function options() {
@@ -64,18 +65,18 @@ function options() {
             case "remove department":
                 return remDep();
             case "quit":
-                return questions();
+                return quit();
         }
     })
 }
 
 function viewEmp() {
-    connection.query("SELECT * FROM employee LEFT JOIN role ON employee.role = role.title", function (err, res) {
+    connection.query("SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;", (err, res) => {
         if (err) throw err;
+        console.log("---------------")
         console.table(res);
-        options();
-    }
-    )
+    })
+    options();
 }
 // function empDep() {
 
@@ -84,30 +85,42 @@ function viewEmp() {
 
 // }
 function addEmp() {
-    inquirer.prompt([
-        {
-            type: "input",
-            name: "firstName",
-            message: "What's the  employee's first name",
-        },
-        {
-            type: "input",
-            name: "lastName",
-            message: "What's the  employee's last name",
-        },
-        {
-            type: "rawlist",
-            name: "role",
-            message: "What is their role?",
-        },
-        {
-            type: "list",
-            name: "manager",
-            message: "Whos the  employee's manager",
-        }
+    connection.query("SELECT title FROM role", function (err, results) {
+        if (err) throw err;
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "firstName",
+                message: "What's the  employee's first name",
+            },
+            {
+                type: "input",
+                name: "lastName",
+                message: "What's the  employee's last name",
+            },
+            {
+                type: "list",
+                name: "role",
+                choices: function () {
+                    var roleChoice = [];
+                    for (var i = 0; i < results.length; i++) {
+                        roleChoice.push(results[i].title)
+                    }
+                    return roleChoice;
+                },
+                message: "What is their role?"
+            },
+            {
+                type: "input",
+                name: "manager",
+                message: "Whos the  employee's manager"
+            }
+        ]).then(function (answers) {
+            answers.push(employee)
+        })
 
-
-    ])
+    })
+    options();
 
 }
 // function removeEmp() {
@@ -137,8 +150,6 @@ function addEmp() {
 // function remDep() {
 
 // }
-// function questions() {
+// function quit() {
 
 // }
-init();
-LOGO();
