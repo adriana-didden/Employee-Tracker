@@ -3,7 +3,7 @@ CREATE DATABASE employee_trackerDB;
 USE employee_trackerDB;
 
 CREATE TABLE employee(
-    id INTEGER NOT NULL AUTO_INCREMENT,
+    id INT AUTO_INCREMENT,
     first_name VARCHAR(30),
     last_name VARCHAR(30),
     role_id INTEGER,
