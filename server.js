@@ -83,6 +83,7 @@ function empDep() {
 }
 // function empMan() {
 
+
 // }
 function addEmp() {
     connection.query("SELECT * FROM role", function (err, results) {
@@ -177,9 +178,24 @@ function addRole() {
 // function viewDep() {
 
 // }
-// function addDep() {
+function addDep() {
+        inquirer
+            .prompt([
+                {
+                    name: "newDep",
+                    type: "input",
+                    message: "What's the new department name?"
+                },
 
-// }
+            ]).then(function (answers) {
+                console.log(answers)
+                const theDep = { name:answers.newDep }
+                connection.query('INSERT INTO department SET ?', theDep, (err, results) => {
+                    if (err) throw err
+                    options();
+                })
+            })
+    }
 // function remDep() {
 
 // }
