@@ -78,9 +78,9 @@ function viewEmp() {
     })
     options();
 }
-function empDep() {
+// function empDep() {
 
-}
+// }
 // function empMan() {
 
 
@@ -127,7 +127,6 @@ function addEmp() {
 
     })
 }
-options();
 // function removeEmp() {
 
 // }
@@ -137,9 +136,14 @@ options();
 // function updateMan() {
 
 // }
-// function allRoles() {
-
-// }
+function allRoles() {
+    connection.query("SELECT role.id, role.title, role.salary,  department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id ;", (err, res) => {
+        if (err) throw err;
+        console.log("---------------")
+        console.table(res);
+    })
+    options();
+}
 function addRole() {
     connection.query("SELECT * FROM department", function (err, results) {
         if (err) throw err;
@@ -158,13 +162,13 @@ function addRole() {
                     message: "What's the new role?"
                 },
                 {
-                    name:"salary",
-                    type:"input",
+                    name: "salary",
+                    type: "input",
                     message: "What's the salary for the role?"
                 }
             ]).then(function (answers) {
                 console.log(answers)
-                const theRole = { salary:answers.salary, title: answers.newRole, department_id: answers.dep }
+                const theRole = { salary: answers.salary, title: answers.newRole, department_id: answers.dep }
                 connection.query('INSERT INTO role SET ?', theRole, (err, results) => {
                     if (err) throw err
                     options();
@@ -179,26 +183,27 @@ function addRole() {
 
 // }
 function addDep() {
-        inquirer
-            .prompt([
-                {
-                    name: "newDep",
-                    type: "input",
-                    message: "What's the new department name?"
-                },
+    inquirer
+        .prompt([
+            {
+                name: "newDep",
+                type: "input",
+                message: "What's the new department name?"
+            },
 
-            ]).then(function (answers) {
-                console.log(answers)
-                const theDep = { name:answers.newDep }
-                connection.query('INSERT INTO department SET ?', theDep, (err, results) => {
-                    if (err) throw err
-                    options();
-                })
+        ]).then(function (answers) {
+            console.log(answers)
+            const theDep = { name: answers.newDep }
+            connection.query('INSERT INTO department SET ?', theDep, (err, results) => {
+                if (err) throw err
+                options();
             })
-    }
+        })
+}
 // function remDep() {
 
 // }
 // function quit() {
 
 // }
+options();
