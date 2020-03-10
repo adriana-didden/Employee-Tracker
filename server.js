@@ -179,9 +179,14 @@ function addRole() {
 // function removeRole() {
 
 // }
-// function viewDep() {
-
-// }
+function viewDep() {
+    connection.query("SELECT id, name AS department FROM department;", (err, res) => {
+        if (err) throw err;
+        console.log("---------------")
+        console.table(res);
+    })
+    options();
+}
 function addDep() {
     inquirer
         .prompt([
